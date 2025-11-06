@@ -19,16 +19,18 @@ typedef struct {
 	uint32_t	TaskID;
 }sTasks;
 
-#define SCH_MAX_TASKS	10
+#define SCH_MAX_TASKS	20
+#define NO_TASK_ID		0
+#define TIMER_CYCLE		10
 
 void SCH_Init(void);
 
-void SCH_Add_Task(void (*pFunction)(), uint32_t _Delay, uint32_t _Period);
+uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t _DELAY, uint32_t _PERIOD);
 
 void SCH_Update(void);
 
 void SCH_Dispatch_Tasks(void);
 
-void SCH_Delete_Task(uint32_t taskID);
+uint8_t SCH_Delete_Task(uint32_t taskID);
 
 #endif /* INC_SCHEDULER_H_ */

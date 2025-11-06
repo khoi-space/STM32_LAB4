@@ -51,7 +51,12 @@ void SystemClock_Config(void);
 static void MX_TIM2_Init(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-
+void blink_debug_led(void);
+void blink_LED0(void);
+void blink_LED1(void);
+void blink_LED2(void);
+void blink_LED3(void);
+void blink_LED4(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -89,7 +94,14 @@ int main(void)
   MX_TIM2_Init();
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  SCH_Add_Task(pFunction, _Delay, _Period);
+  HAL_TIM_Base_Start_IT(&htim2);
+  SCH_Init();
+  SCH_Add_Task(blink_debug_led, 1000, 1000);
+  SCH_Add_Task(blink_LED0, 0, 1000);
+  SCH_Add_Task(blink_LED1, 1000, 1000);
+  SCH_Add_Task(blink_LED2, 1000, 1000);
+  SCH_Add_Task(blink_LED3, 1000, 1000);
+  SCH_Add_Task(blink_LED4, 5000, 0);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -197,22 +209,53 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, DEBUG_LED_Pin|LED0_Pin|LED1_Pin|LED2_Pin
+                          |LED3_Pin|LED4_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : DEBUG_LED_Pin */
-  GPIO_InitStruct.Pin = DEBUG_LED_Pin;
+  /*Configure GPIO pins : DEBUG_LED_Pin LED0_Pin LED1_Pin LED2_Pin
+                           LED3_Pin LED4_Pin */
+  GPIO_InitStruct.Pin = DEBUG_LED_Pin|LED0_Pin|LED1_Pin|LED2_Pin
+                          |LED3_Pin|LED4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(DEBUG_LED_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 
 /* USER CODE BEGIN 4 */
+void blink_debug_led(void) {
+	HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
+}
+
+void blink_LED0(void) {
+	HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
+}
+
+void blink_LED1(void) {
+	HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+}
+
+void blink_LED2(void) {
+	HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
+}
+
+void blink_LED3(void) {
+	HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+}
+
+void blink_LED4(void) {
+	HAL_GPIO_TogglePin(LED4_GPIO_Port, LED4_Pin);
+}
+
+int counter = 100;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	if (htim->Instance == TIM2) {
-		SCH_Update();
-	}
+	SCH_Update();
+//	--counter;
+//	if (counter == 0) {
+//		counter = 100;
+//		HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
+//	}
 }
 /* USER CODE END 4 */
 
