@@ -22,27 +22,7 @@ int time_route0 = 0;
 int time_route1 = 0;
 
 void fsm_automatic_run(void) {
-	if (mode != AUTO_MODE) return;
-
-	// Change mode to man_mode
-	if (is_button_pressed(BUTTON_MODE) && fsm_auto_task_id != NO_TASK_ID) {
-		if (is_mode_button_locked == 0) {
-			clear_all_LEDs();
-			mode = MAN_MODE;
-			status = MAN_RED;
-			set_7seg_buffer_0(0);
-			set_7seg_buffer_1(0);
-
-			if (SCH_Delete_Task(fsm_auto_task_id)) {
-				fsm_auto_task_id = NO_TASK_ID;
-			}
-			fsm_man_task_id = SCH_Add_Task(fsm_manual_run, 0, 100);
-
-			is_mode_button_locked = 1;
-			return;
-		}
-	}
-	else is_mode_button_locked = 0;
+	if (fsm_auto_task_id == NO_TASK_ID) return;
 
 	switch(status) {
 		case INIT:

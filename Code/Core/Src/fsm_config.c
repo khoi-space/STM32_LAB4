@@ -22,58 +22,9 @@ static int last_config_status = -1;
 #define BLINK_CYCLE	5 //500ms
 
 void fsm_config_run(void) {
-	if (mode != CONFIG_MODE) {
+	if (fsm_config_task_id == NO_TASK_ID) {
 		last_config_status = -1;
 		return;
-	}
-
-	// Change mode to auto_mode
-	if (is_button_pressed(BUTTON_MODE) && fsm_config_task_id != NO_TASK_ID) {
-		if (is_mode_button_locked == 0) {
-			clear_all_LEDs();
-
-			red_counter = red_counter_buffer;
-			amber_counter = amber_counter_buffer;
-			green_counter = green_counter_buffer;
-
-			mode = AUTO_MODE;
-			status = AUTO_DIR2_GREEN;
-			last_config_status = -1;
-
-			if (SCH_Delete_Task(fsm_config_task_id)) {
-				fsm_config_task_id = NO_TASK_ID;
-			}
-			fsm_auto_task_id = SCH_Add_Task(fsm_automatic_run, 0, 1000);
-
-			is_mode_button_locked = 1;
-			return;
-		}
-	}
-	else is_mode_button_locked = 0;
-
-	// If button_next_or_up pressed, count up temp_counter
-	if (is_button_pressed(BUTTON_NEXT_OR_UP)) {
-		temp_counter += 1;
-		if (temp_counter > 99) temp_counter = 0;
-	}
-
-	// If button_set pressed, set temp_counter to counter
-	if (is_button_pressed(BUTTON_SET)) {
-		if (status == CONFIG_RED) {
-			red_counter_buffer = temp_counter;
-			temp_counter = amber_counter_buffer;
-			status = CONFIG_AMBER;
-		}
-		else if (status == CONFIG_AMBER) {
-			amber_counter_buffer = temp_counter;
-			temp_counter = green_counter_buffer;
-			status = CONFIG_GREEN;
-		}
-		else if (status == CONFIG_GREEN) {
-			green_counter_buffer = temp_counter;
-			temp_counter = red_counter_buffer;
-			status = CONFIG_RED;
-		}
 	}
 
 	// Blink LEDs every 500ms
@@ -97,31 +48,4 @@ void fsm_config_run(void) {
 			status = CONFIG_RED;
 			break;
 	}
-
-//	if (blink_counter <= 0) {
-//		blink_counter = BLINK_CYCLE;
-//
-//		switch(status) {
-//			case CONFIG_RED:
-//				blink_red_LEDs();
-//				set_amber_LEDs(OFF, OFF);
-//				set_green_LEDs(OFF, OFF);
-//				break;
-//			case CONFIG_AMBER:
-//				blink_amber_LEDs();
-//				set_red_LEDs(OFF, OFF);
-//				set_green_LEDs(OFF, OFF);
-//				break;
-//			case CONFIG_GREEN:
-//				blink_green_LEDs();
-//				set_red_LEDs(OFF, OFF);
-//				set_amber_LEDs(OFF, OFF);
-//				break;
-//			default:
-//				status = CONFIG_RED;
-//				break;
-//		}
-//	} else {
-//		blink_counter--;
-//	}
 }

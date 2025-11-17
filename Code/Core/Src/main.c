@@ -99,10 +99,10 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim2);
   SCH_Init();
 
-	mode = AUTO_MODE;
-	status = INIT;
+//	mode = AUTO_MODE;
+	status = AUTO_DIR1_GREEN;
 
-//  SCH_Add_Task(fsm_btn_handler_run, 0, 300);
+  SCH_Add_Task(fsm_btn_handler_run, 0, 300);
 
 //  SCH_Add_Task(fsm_automatic_run, 0, 100);
 //  SCH_Add_Task(fsm_manual_run, 0, 100);
