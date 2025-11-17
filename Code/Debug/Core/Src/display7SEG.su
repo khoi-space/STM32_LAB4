@@ -1,0 +1,6 @@
+display7SEG.c:24:6:clear_all_7seg_en	8	static
+display7SEG.c:31:6:display7SEG_0	16	static
+display7SEG.c:43:6:display7SEG_1	16	static
+display7SEG.c:55:6:set_7seg_buffer_0	16	static
+display7SEG.c:60:6:set_7seg_buffer_1	16	static
+display7SEG.c:66:6:update_7seg_multiplex	8	static

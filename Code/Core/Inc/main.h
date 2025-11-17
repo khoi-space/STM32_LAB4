@@ -58,19 +58,68 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define DEBUG_LED_Pin GPIO_PIN_5
+#define DEBUG_LED_Pin GPIO_PIN_0
 #define DEBUG_LED_GPIO_Port GPIOA
-#define LED0_Pin GPIO_PIN_11
-#define LED0_GPIO_Port GPIOA
-#define LED1_Pin GPIO_PIN_12
-#define LED1_GPIO_Port GPIOA
-#define LED2_Pin GPIO_PIN_13
-#define LED2_GPIO_Port GPIOA
-#define LED3_Pin GPIO_PIN_14
-#define LED3_GPIO_Port GPIOA
-#define LED4_Pin GPIO_PIN_15
-#define LED4_GPIO_Port GPIOA
+#define LED_RED_0_Pin GPIO_PIN_1
+#define LED_RED_0_GPIO_Port GPIOA
+#define LED_AMBER_0_Pin GPIO_PIN_2
+#define LED_AMBER_0_GPIO_Port GPIOA
+#define LED_GREEN_0_Pin GPIO_PIN_3
+#define LED_GREEN_0_GPIO_Port GPIOA
+#define LED_RED_1_Pin GPIO_PIN_4
+#define LED_RED_1_GPIO_Port GPIOA
+#define LED_AMBER_1_Pin GPIO_PIN_5
+#define LED_AMBER_1_GPIO_Port GPIOA
+#define LED_GREEN_1_Pin GPIO_PIN_6
+#define LED_GREEN_1_GPIO_Port GPIOA
+#define SEG_A_0_Pin GPIO_PIN_7
+#define SEG_A_0_GPIO_Port GPIOA
+#define BUTTON_1_Pin GPIO_PIN_0
+#define BUTTON_1_GPIO_Port GPIOB
+#define BUTTON_2_Pin GPIO_PIN_1
+#define BUTTON_2_GPIO_Port GPIOB
+#define BUTTON_3_Pin GPIO_PIN_2
+#define BUTTON_3_GPIO_Port GPIOB
+#define SEG_B_1_Pin GPIO_PIN_10
+#define SEG_B_1_GPIO_Port GPIOB
+#define SEG_C_1_Pin GPIO_PIN_11
+#define SEG_C_1_GPIO_Port GPIOB
+#define SEG_D_1_Pin GPIO_PIN_12
+#define SEG_D_1_GPIO_Port GPIOB
+#define SEG_E_1_Pin GPIO_PIN_13
+#define SEG_E_1_GPIO_Port GPIOB
+#define SEG_F_1_Pin GPIO_PIN_14
+#define SEG_F_1_GPIO_Port GPIOB
+#define SEG_G_1_Pin GPIO_PIN_15
+#define SEG_G_1_GPIO_Port GPIOB
+#define SEG_B_0_Pin GPIO_PIN_8
+#define SEG_B_0_GPIO_Port GPIOA
+#define SEG_C_0_Pin GPIO_PIN_9
+#define SEG_C_0_GPIO_Port GPIOA
+#define SEG_D_0_Pin GPIO_PIN_10
+#define SEG_D_0_GPIO_Port GPIOA
+#define SEG_E_0_Pin GPIO_PIN_11
+#define SEG_E_0_GPIO_Port GPIOA
+#define SEG_F_0_Pin GPIO_PIN_12
+#define SEG_F_0_GPIO_Port GPIOA
+#define SEG_G_0_Pin GPIO_PIN_13
+#define SEG_G_0_GPIO_Port GPIOA
+#define BUTTON_4_Pin GPIO_PIN_14
+#define BUTTON_4_GPIO_Port GPIOA
+#define EN0_Pin GPIO_PIN_4
+#define EN0_GPIO_Port GPIOB
+#define EN1_Pin GPIO_PIN_5
+#define EN1_GPIO_Port GPIOB
+#define EN2_Pin GPIO_PIN_6
+#define EN2_GPIO_Port GPIOB
+#define EN3_Pin GPIO_PIN_7
+#define EN3_GPIO_Port GPIOB
+#define SEG_A_1_Pin GPIO_PIN_9
+#define SEG_A_1_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
+#define		ON						0
+#define		OFF						1
+
 
 /* USER CODE END Private defines */
 

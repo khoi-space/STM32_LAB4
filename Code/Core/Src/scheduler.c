@@ -23,9 +23,9 @@ void SCH_Init(void) {
 	newTaskID = 0;
 }
 
-uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t _DELAY, uint32_t _PERIOD) {
-	uint32_t DELAY = _DELAY / TIMER_CYCLE;
-	uint32_t PERIOD = _PERIOD / TIMER_CYCLE;
+uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t DELAY, uint32_t PERIOD) {
+	uint32_t _DELAY = DELAY / TIMER_CYCLE;
+	uint32_t _PERIOD = PERIOD / TIMER_CYCLE;
 
 	uint8_t newTaskIdx = 0;
 	uint32_t sumDelay = 0;
@@ -33,9 +33,9 @@ uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t _DELAY, uint32_t _PERIOD) {
 
 	for (newTaskIdx = 0; newTaskIdx < SCH_MAX_TASKS; ++newTaskIdx) {
 		sumDelay = sumDelay + SCH_tasks_list[newTaskIdx].Delay;
-		if (sumDelay > DELAY) {
-			newDelay = DELAY - (sumDelay - SCH_tasks_list[newTaskIdx].Delay);
-			SCH_tasks_list[newTaskIdx].Delay = sumDelay - DELAY;
+		if (sumDelay > _DELAY) {
+			newDelay = _DELAY - (sumDelay - SCH_tasks_list[newTaskIdx].Delay);
+			SCH_tasks_list[newTaskIdx].Delay = sumDelay - _DELAY;
 
 			// Shift tasks to right to create a gap for the newTask
 			for (uint8_t i = SCH_MAX_TASKS - 1; i > newTaskIdx; --i) {
@@ -51,7 +51,7 @@ uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t _DELAY, uint32_t _PERIOD) {
 			// Insert newTask to the gap
 			SCH_tasks_list[newTaskIdx].pTask = pFunc;
 			SCH_tasks_list[newTaskIdx].Delay = newDelay;
-			SCH_tasks_list[newTaskIdx].Period = PERIOD;
+			SCH_tasks_list[newTaskIdx].Period = _PERIOD;
 
 			if (SCH_tasks_list[newTaskIdx].Delay == 0) {
 				SCH_tasks_list[newTaskIdx].RunMe = 1;
@@ -63,8 +63,8 @@ uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t _DELAY, uint32_t _PERIOD) {
 		} else {
 			if (SCH_tasks_list[newTaskIdx].pTask == 0x0000) { //Insert when list is empty or the tail
 				SCH_tasks_list[newTaskIdx].pTask = pFunc;
-				SCH_tasks_list[newTaskIdx].Delay = DELAY - sumDelay;
-				SCH_tasks_list[newTaskIdx].Period = PERIOD;
+				SCH_tasks_list[newTaskIdx].Delay = _DELAY - sumDelay;
+				SCH_tasks_list[newTaskIdx].Period = _PERIOD;
 				if (SCH_tasks_list[newTaskIdx].Delay == 0) {
 					SCH_tasks_list[newTaskIdx].RunMe = 1;
 				} else {
@@ -110,7 +110,7 @@ uint8_t SCH_Delete_Task(uint32_t taskID) {
 		for (taskIdx = 0; taskIdx < SCH_MAX_TASKS; ++taskIdx) { // Search for TaskID
 			if (SCH_tasks_list[taskIdx].TaskID == taskID) {
 				Return_code = 1; // Found TaskID
-				if (taskIdx != 0 && taskIdx < SCH_MAX_TASKS - 1) {
+				if (taskIdx < SCH_MAX_TASKS - 1) {
 					if (SCH_tasks_list[taskIdx + 1].pTask != 0x0000) {
 						SCH_tasks_list[taskIdx + 1].Delay += SCH_tasks_list[taskIdx].Delay;
 					}
@@ -126,6 +126,7 @@ uint8_t SCH_Delete_Task(uint32_t taskID) {
 						SCH_tasks_list[j].TaskID = SCH_tasks_list[j + 1].TaskID;
 //					}
 				}
+
 				// Remove the last
 				SCH_tasks_list[j].pTask = 0;
 				SCH_tasks_list[j].Period = 0;

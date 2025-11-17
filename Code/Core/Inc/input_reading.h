@@ -1,0 +1,26 @@
+/*
+ * input_reading.h
+ *
+ *  Created on: Nov 11, 2025
+ *      Author: ADMIN
+ */
+
+#ifndef INC_INPUT_READING_H_
+#define INC_INPUT_READING_H_
+
+#define BUTTON_MODE	0
+#define BUTTON_NEXT_OR_UP	1
+#define BUTTON_SET	2
+#define BUTTON_RESET	3
+
+typedef enum ButtonState {
+	BUTTON_RELEASED,
+	BUTTON_PRESSED,
+	BUTTON_PRESSED_MORE_THAN_1S
+} ButtonState_t;
+
+void button_reading (void);
+unsigned char is_button_pressed(unsigned char index);
+unsigned char is_button_pressed_1s(unsigned char index);
+
+#endif /* INC_INPUT_READING_H_ */

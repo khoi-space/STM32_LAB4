@@ -1,0 +1,8 @@
+displayLED.c:11:6:blink_debug_led	8	static
+displayLED.c:15:6:blink_red_LEDs	8	static
+displayLED.c:19:6:blink_amber_LEDs	8	static
+displayLED.c:23:6:blink_green_LEDs	8	static
+displayLED.c:28:6:set_red_LEDs	16	static
+displayLED.c:33:6:set_amber_LEDs	16	static
+displayLED.c:38:6:set_green_LEDs	16	static
+displayLED.c:43:6:clear_all_LEDs	8	static
