@@ -16,10 +16,10 @@
 
 int temp_counter = 0;
 
-static int last_config_status = -1;
+//static int last_config_status = -1;
 
 //static int blink_counter = 0;
-#define BLINK_CYCLE	5 //500ms
+//#define BLINK_CYCLE	5 //500ms
 
 void fsm_config_run(void) {
 //	if (fsm_config_task_id == NO_TASK_ID) {

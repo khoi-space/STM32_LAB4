@@ -26,7 +26,9 @@ void fsm_btn_handler_run(void) {
 
 		if (fsm_auto_task_id != NO_TASK_ID) {
 			// Change to manual mode
-			status = MAN_RED;
+			clear_all_7seg_en();
+			clear_all_LEDs();
+			status = MAN_DIR1_GREEN;
 
 			SCH_Delete_Task(fsm_auto_task_id);
 			fsm_auto_task_id = NO_TASK_ID;
@@ -35,6 +37,8 @@ void fsm_btn_handler_run(void) {
 		}
 		else if (fsm_man_task_id != NO_TASK_ID) {
 			// Change to config mode
+			clear_all_7seg_en();
+			clear_all_LEDs();
 			status = CONFIG_RED;
 			temp_counter = red_counter_buffer;
 			last_config_status = CONFIG_RED;
@@ -48,6 +52,8 @@ void fsm_btn_handler_run(void) {
 			return;
 		}
 		else if (fsm_config_task_id != NO_TASK_ID) {
+			clear_all_7seg_en();
+			clear_all_LEDs();
 			status = AUTO_DIR1_GREEN;
 
 			red_counter = red_counter_buffer;
@@ -62,7 +68,9 @@ void fsm_btn_handler_run(void) {
 		}
 
 		return;
-	} else is_mode_button_locked = 0;
+	} else if (is_button_pressed(BUTTON_MODE)) {
+		is_mode_button_locked = 0;
+	}
 
 	if (is_button_pressed(BUTTON_NEXT_OR_UP) && is_up_button_locked == 0) {
 		is_up_button_locked = 1;
@@ -71,8 +79,12 @@ void fsm_btn_handler_run(void) {
 			return;
 		}
 		else if (fsm_man_task_id != NO_TASK_ID) {
-			if (status == MAN_RED) status = MAN_GREEN;
-			else if (status == MAN_GREEN) status = MAN_RED;
+			if (status == MAN_DIR2_GREEN) {
+				status = MAN_DIR2_AMBER;
+			}
+			else if (status == MAN_DIR1_GREEN) {
+				status = MAN_DIR1_AMBER;
+			}
 			return;
 		}
 		else if (fsm_config_task_id != NO_TASK_ID) {
@@ -82,7 +94,9 @@ void fsm_btn_handler_run(void) {
 		}
 
 		return;
-	} else is_up_button_locked = 0;
+	} else if (is_button_pressed(BUTTON_NEXT_OR_UP)) {
+		is_up_button_locked = 0;
+	}
 
 	if (is_button_pressed(BUTTON_SET) && is_set_button_locked == 0) {
 		is_set_button_locked = 1;
@@ -107,7 +121,9 @@ void fsm_btn_handler_run(void) {
 		}
 
 		return;
-	} else is_set_button_locked = 0;
+	} else if (is_button_pressed(BUTTON_SET)) {
+		is_set_button_locked = 0;
+	}
 
 //	switch(mode) {
 //	case AUTO_MODE:
