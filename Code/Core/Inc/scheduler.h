@@ -10,14 +10,14 @@
 
 #include <stdint.h>
 
-typedef struct sTasks_Node {
+typedef struct sTasks {
 	void (*pTask)(void);
 	uint32_t	Delay;
 	uint32_t	Period;
 	uint8_t		RunMe;
 	uint32_t	TaskID;
 
-	struct sTasks_Node *pNext;
+	struct sTasks *pNext;
 }sTasks;
 
 #define SCH_MAX_TASKS	20
