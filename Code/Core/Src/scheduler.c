@@ -10,16 +10,10 @@
 static uint32_t getNewTaskID(void);
 static uint32_t newTaskID = 0;
 
-static sTasks SCH_tasks_list[SCH_MAX_TASKS];
+sTasks *SCH_tasks_list_head = NULL;
 
 void SCH_Init(void) {
-	for (int i = 0; i < SCH_MAX_TASKS; ++i) {
-		SCH_tasks_list[i].pTask = 0;
-		SCH_tasks_list[i].Delay = 0;
-		SCH_tasks_list[i].Period = 0;
-		SCH_tasks_list[i].RunMe = 0;
-		SCH_tasks_list[i].TaskID = 0;
-	}
+	SCH_tasks_list_head = NULL;
 	newTaskID = 0;
 }
 
