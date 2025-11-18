@@ -99,20 +99,17 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim2);
   SCH_Init();
 
-	mode = AUTO_MODE;
-	status = INIT;
-
 //  SCH_Add_Task(fsm_btn_handler_run, 0, 300);
 
-//  SCH_Add_Task(fsm_automatic_run, 0, 100);
-//  SCH_Add_Task(fsm_manual_run, 0, 100);
-//  SCH_Add_Task(fsm_config_run, 0, 100);
+  SCH_Add_Task(fsm_automatic_run, 0, 100);
+  SCH_Add_Task(fsm_manual_run, 0, 100);
+  SCH_Add_Task(fsm_config_run, 0, 100);
 
-  fsm_auto_task_id = SCH_Add_Task(fsm_automatic_run, 0, 1000);
-  fsm_man_task_id = NO_TASK_ID;
-  fsm_config_task_id = NO_TASK_ID;
+//  fsm_auto_task_id = SCH_Add_Task(fsm_automatic_run, 0, 1000);
+//  fsm_man_task_id = NO_TASK_ID;
+//  fsm_config_task_id = NO_TASK_ID;
 
-  SCH_Add_Task(update_7seg_multiplex, 0, 125);
+//  SCH_Add_Task(update_7seg_multiplex, 0, 125);
   SCH_Add_Task(blink_debug_led, 0, 1000);
   /* USER CODE END 2 */
 

@@ -18,21 +18,21 @@ void fsm_manual_run(void) {
 	if (mode != MAN_MODE) return;
 
 	// Change mode to config_mode
-	if (is_button_pressed(BUTTON_MODE) && fsm_man_task_id != NO_TASK_ID) {
-		if (is_mode_button_locked == 0) {
-			clear_all_LEDs();
+	if (is_button_pressed(BUTTON_MODE) && is_mode_button_locked == 0) {
+		is_mode_button_locked = 1;
+		clear_all_LEDs();
 
-			mode = CONFIG_MODE;
-			status = CONFIG_RED;
+		mode = CONFIG_MODE;
+		status = CONFIG_RED;
+		last_config_status = CONFIG_RED;
 
-			if (SCH_Delete_Task(fsm_man_task_id)) {
-				fsm_man_task_id = NO_TASK_ID;
-			}
-			fsm_config_task_id = SCH_Add_Task(fsm_config_run, 0, 100);
+//		if (SCH_Delete_Task(fsm_man_task_id)) {
+//			fsm_man_task_id = NO_TASK_ID;
+//		}
+//		fsm_config_task_id = SCH_Add_Task(fsm_config_run, 0, 100);
 
-			is_mode_button_locked = 1;
-			return;
-		}
+		is_mode_button_locked = 1;
+		return;
 	}
 	else is_mode_button_locked = 0;
 
@@ -65,4 +65,5 @@ void fsm_manual_run(void) {
 			status = MAN_RED;
 			break;
 	}
+	clear_all_7seg_en();
 }

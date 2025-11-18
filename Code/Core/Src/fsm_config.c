@@ -16,7 +16,7 @@
 
 int temp_counter = 0;
 
-static int last_config_status = -1;
+int last_config_status = -1;
 
 //static int blink_counter = 0;
 #define BLINK_CYCLE	5 //500ms
@@ -28,26 +28,24 @@ void fsm_config_run(void) {
 	}
 
 	// Change mode to auto_mode
-	if (is_button_pressed(BUTTON_MODE) && fsm_config_task_id != NO_TASK_ID) {
-		if (is_mode_button_locked == 0) {
-			clear_all_LEDs();
+	if (is_button_pressed(BUTTON_MODE) && is_mode_button_locked == 0) {
+		is_mode_button_locked = 1;
+		clear_all_LEDs();
 
-			red_counter = red_counter_buffer;
-			amber_counter = amber_counter_buffer;
-			green_counter = green_counter_buffer;
+		red_counter = red_counter_buffer;
+		amber_counter = amber_counter_buffer;
+		green_counter = green_counter_buffer;
 
-			mode = AUTO_MODE;
-			status = AUTO_DIR2_GREEN;
-			last_config_status = -1;
+		mode = AUTO_MODE;
+		status = AUTO_DIR2_GREEN;
+		last_config_status = -1;
 
-			if (SCH_Delete_Task(fsm_config_task_id)) {
-				fsm_config_task_id = NO_TASK_ID;
-			}
-			fsm_auto_task_id = SCH_Add_Task(fsm_automatic_run, 0, 1000);
+//			SCH_Delete_Task(fsm_config_task_id);
+//			fsm_config_task_id = NO_TASK_ID;
+//			fsm_auto_task_id = SCH_Add_Task(fsm_automatic_run, 0, 1000);
 
-			is_mode_button_locked = 1;
-			return;
-		}
+		is_mode_button_locked = 1;
+		return;
 	}
 	else is_mode_button_locked = 0;
 
@@ -76,6 +74,7 @@ void fsm_config_run(void) {
 		}
 	}
 
+
 	// Blink LEDs every 500ms
 	switch(status) {
 		case CONFIG_RED:
@@ -97,6 +96,10 @@ void fsm_config_run(void) {
 			status = CONFIG_RED;
 			break;
 	}
+
+	set_7seg_buffer_0(2);
+	set_7seg_buffer_1(temp_counter);
+	update_7seg_multiplex();
 
 //	if (blink_counter <= 0) {
 //		blink_counter = BLINK_CYCLE;

@@ -12,6 +12,7 @@
 #include "global.h"
 
 extern int temp_counter;
+extern int last_config_status;
 
 void fsm_config_run(void);
 
