@@ -91,10 +91,10 @@ void SCH_Update(void) {
 
 void SCH_Dispatch_Tasks(void) {
 	if (SCH_tasks_list[0].RunMe > 0) {
-		(*SCH_tasks_list[0].pTask)();
-		SCH_tasks_list[0].RunMe = 0; // Reset RunMe
 		sTasks tempTask = SCH_tasks_list[0];
-		SCH_Delete_Task(tempTask.TaskID);
+		SCH_Delete_Task(SCH_tasks_list[0].TaskID);
+		(*tempTask.pTask)();
+//		tempTask.RunMe = 0; // Reset RunMe
 		if (tempTask.Period != 0) {
 			SCH_Add_Task(tempTask.pTask, tempTask.Period * TIMER_CYCLE, tempTask.Period * TIMER_CYCLE);
 		}

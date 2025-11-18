@@ -101,25 +101,25 @@ void fsm_config_run(void) {
 //			break;
 //	}
 
-	set_7seg_buffer_0(2);
-	set_7seg_buffer_1(temp_counter);
-	update_7seg_multiplex();
 
 	if (blink_counter <= 0) {
 		blink_counter = BLINK_CYCLE;
 
 		switch(status) {
 			case CONFIG_RED:
+				set_7seg_buffer_0(1);
 				blink_red_LEDs();
 				set_amber_LEDs(OFF, OFF);
 				set_green_LEDs(OFF, OFF);
 				break;
 			case CONFIG_AMBER:
+				set_7seg_buffer_0(2);
 				blink_amber_LEDs();
 				set_red_LEDs(OFF, OFF);
 				set_green_LEDs(OFF, OFF);
 				break;
 			case CONFIG_GREEN:
+				set_7seg_buffer_0(3);
 				blink_green_LEDs();
 				set_red_LEDs(OFF, OFF);
 				set_amber_LEDs(OFF, OFF);
@@ -131,4 +131,6 @@ void fsm_config_run(void) {
 	} else {
 		blink_counter--;
 	}
+	set_7seg_buffer_1(temp_counter);
+	update_7seg_multiplex();
 }

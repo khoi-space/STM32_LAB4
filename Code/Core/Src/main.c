@@ -110,7 +110,7 @@ int main(void)
 //  fsm_config_task_id = NO_TASK_ID;
 
 //  SCH_Add_Task(update_7seg_multiplex, 0, 125);
-  SCH_Add_Task(blink_debug_led, 0, 1000);
+  SCH_Add_Task(blink_debug_led, 1000, 1000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
