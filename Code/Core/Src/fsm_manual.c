@@ -14,6 +14,9 @@
 #include "input_reading.h"
 #include "scheduler.h"
 
+static int counter;
+#define COUNTER_CYCLE 10 //1000ms
+
 void fsm_manual_run(void) {
 	if (mode != MAN_MODE) return;
 
@@ -25,26 +28,34 @@ void fsm_manual_run(void) {
 		mode = CONFIG_MODE;
 		status = CONFIG_RED;
 		last_config_status = CONFIG_RED;
-
-//		if (SCH_Delete_Task(fsm_man_task_id)) {
-//			fsm_man_task_id = NO_TASK_ID;
-//		}
-//		fsm_config_task_id = SCH_Add_Task(fsm_config_run, 0, 100);
-
-		is_mode_button_locked = 1;
+		temp_counter = red_counter_buffer;
 		return;
+	} else if (!is_button_pressed(BUTTON_MODE)) {
+		is_mode_button_locked = 0;
 	}
-	else is_mode_button_locked = 0;
 
-	if (is_button_pressed(BUTTON_NEXT_OR_UP)) {
-		if (is_up_button_locked == 0) {
-			if (status == MAN_RED) status = MAN_GREEN;
-			if (status == MAN_GREEN) status = MAN_RED;
-
-			is_up_button_locked = 1;
+	if (is_button_pressed(BUTTON_NEXT_OR_UP) && is_up_button_locked == 0) {
+		is_up_button_locked = 1;
+		if (status == MAN_RED) {
+			clear_all_7seg_en();
+			status = MAN_GREEN;
 		}
-	} else is_up_button_locked = 0;
+		else if (status == MAN_GREEN) {
+			counter = amber_counter_buffer * COUNTER_CYCLE;
+			status = MAN_AMBER;
+		}
+	} else if (!is_button_pressed(BUTTON_NEXT_OR_UP)) {
+		is_up_button_locked = 0;
+	}
 
+	if (status == MAN_AMBER) {
+		if (counter <= 0) {
+			counter = amber_counter_buffer * COUNTER_CYCLE;
+			status = MAN_RED;
+		} else --counter;
+	}
+
+	// Display
 	switch(status) {
 		case MAN_RED:
 			set_red_LEDs(ON, OFF);
@@ -65,5 +76,4 @@ void fsm_manual_run(void) {
 			status = MAN_RED;
 			break;
 	}
-	clear_all_7seg_en();
 }
