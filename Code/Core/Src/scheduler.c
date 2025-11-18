@@ -23,7 +23,7 @@ void SCH_Init(void) {
 	newTaskID = 0;
 }
 
-uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t DELAY, uint32_t PERIOD) {
+uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t DELAY, uint32_t PERIOD, uint32_t EXISTING_ID) {
 	uint32_t _DELAY = DELAY / TIMER_CYCLE;
 	uint32_t _PERIOD = PERIOD / TIMER_CYCLE;
 
@@ -43,7 +43,7 @@ uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t DELAY, uint32_t PERIOD) {
 					SCH_tasks_list[i].pTask = SCH_tasks_list[i - 1].pTask;
 					SCH_tasks_list[i].Period = SCH_tasks_list[i - 1].Period;
 					SCH_tasks_list[i].Delay = SCH_tasks_list[i - 1].Delay;
-//					SCH_tasks_list[i].RunMe = SCH_tasks_list[i - 1].RunMe;
+					SCH_tasks_list[i].RunMe = SCH_tasks_list[i - 1].RunMe;
 					SCH_tasks_list[i].TaskID = SCH_tasks_list[i - 1].TaskID;
 				}
 			}
@@ -58,7 +58,12 @@ uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t DELAY, uint32_t PERIOD) {
 			} else {
 				SCH_tasks_list[newTaskIdx].RunMe = 0;
 			}
-			SCH_tasks_list[newTaskIdx].TaskID = getNewTaskID();
+
+			if (EXISTING_ID == NO_TASK_ID) {
+				SCH_tasks_list[newTaskIdx].TaskID = getNewTaskID();
+			} else {
+				SCH_tasks_list[newTaskIdx].TaskID = EXISTING_ID;
+			}
 			return SCH_tasks_list[newTaskIdx].TaskID;
 		} else {
 			if (SCH_tasks_list[newTaskIdx].pTask == 0x0000) { //Insert when list is empty or the tail
@@ -70,7 +75,11 @@ uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t DELAY, uint32_t PERIOD) {
 				} else {
 					SCH_tasks_list[newTaskIdx].RunMe = 0;
 				}
-				SCH_tasks_list[newTaskIdx].TaskID = getNewTaskID();
+				if (EXISTING_ID == NO_TASK_ID) {
+					SCH_tasks_list[newTaskIdx].TaskID = getNewTaskID();
+				} else {
+					SCH_tasks_list[newTaskIdx].TaskID = EXISTING_ID;
+				}
 				return SCH_tasks_list[newTaskIdx].TaskID;
 			}
 		}
@@ -92,12 +101,30 @@ void SCH_Update(void) {
 void SCH_Dispatch_Tasks(void) {
 	if (SCH_tasks_list[0].RunMe > 0) {
 		(*SCH_tasks_list[0].pTask)();
-		SCH_tasks_list[0].RunMe = 0; // Reset RunMe
 		sTasks tempTask = SCH_tasks_list[0];
-		SCH_Delete_Task(tempTask.TaskID);
+		SCH_tasks_list[0].RunMe = 0; // Reset RunMe
+		SCH_Delete_Task(SCH_tasks_list[0].TaskID);
 		if (tempTask.Period != 0) {
-			SCH_Add_Task(tempTask.pTask, tempTask.Period * TIMER_CYCLE, tempTask.Period * TIMER_CYCLE);
+			SCH_Add_Task(tempTask.pTask, tempTask.Period * TIMER_CYCLE, tempTask.Period * TIMER_CYCLE, tempTask.TaskID);
 		}
+
+//		sTasks tempTask = SCH_tasks_list[0];
+//
+//		// 2. XÓA task khỏi danh sách TRƯỚC KHI CHẠY
+//		//    (Đây là bước quan trọng nhất để tránh xung đột)
+//		//    Hàm SCH_Delete_Task sẽ dồn task tiếp theo lên vị trí [0]
+//		SCH_Delete_Task(tempTask.TaskID);
+//
+//		// 3. Chạy task (từ bản sao tạm)
+//		//    Bây giờ, nếu task này (ví dụ: fsm_btn_handler_run)
+//		//    gọi SCH_Add_Task, nó sẽ thao tác trên một danh sách đã ổn định.
+//		(*tempTask.pTask)();
+//
+//		// 4. Thêm lại task (nếu nó là định kỳ)
+//		//    Sử dụng ID cũ (tempTask.TaskID) để đảm bảo ID không đổi
+//		if (tempTask.Period != 0) {
+//			SCH_Add_Task(tempTask.pTask, tempTask.Period * TIMER_CYCLE, tempTask.Period * TIMER_CYCLE, tempTask.TaskID);
+//		}
 	}
 }
 

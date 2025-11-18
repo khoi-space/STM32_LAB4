@@ -22,7 +22,7 @@ int time_route0 = 0;
 int time_route1 = 0;
 
 void fsm_automatic_run(void) {
-	if (fsm_auto_task_id == NO_TASK_ID) return;
+//	if (fsm_auto_task_id == NO_TASK_ID) return;
 
 	switch(status) {
 		case INIT:
@@ -32,7 +32,7 @@ void fsm_automatic_run(void) {
 			status = AUTO_DIR1_GREEN;
 
 			time_route0 = green_counter;
-			time_route1 = green_counter + amber_counter;
+			time_route1 = red_counter;
 			break;
 
 		case AUTO_DIR1_GREEN:

@@ -25,7 +25,7 @@ typedef struct {
 
 void SCH_Init(void);
 
-uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t _DELAY, uint32_t _PERIOD);
+uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t DELAY, uint32_t PERIOD, uint32_t EXISTING_ID);
 
 void SCH_Update(void);
 

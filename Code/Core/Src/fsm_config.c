@@ -22,10 +22,10 @@ static int last_config_status = -1;
 #define BLINK_CYCLE	5 //500ms
 
 void fsm_config_run(void) {
-	if (fsm_config_task_id == NO_TASK_ID) {
-		last_config_status = -1;
-		return;
-	}
+//	if (fsm_config_task_id == NO_TASK_ID) {
+//		last_config_status = -1;
+//		return;
+//	}
 
 	// Blink LEDs every 500ms
 	switch(status) {

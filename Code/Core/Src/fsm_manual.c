@@ -15,7 +15,7 @@
 #include "scheduler.h"
 
 void fsm_manual_run(void) {
-	if (fsm_man_task_id == NO_TASK_ID) return;
+//	if (fsm_man_task_id == NO_TASK_ID) return;
 
 	switch(status) {
 		case MAN_RED:

@@ -100,20 +100,20 @@ int main(void)
   SCH_Init();
 
 //	mode = AUTO_MODE;
-	status = AUTO_DIR1_GREEN;
+	status = INIT;
 
-  SCH_Add_Task(fsm_btn_handler_run, 0, 300);
+  SCH_Add_Task(blink_debug_led, 0, 1000, NO_TASK_ID);
+  SCH_Add_Task(fsm_btn_handler_run, 0, 300, NO_TASK_ID);
+//  SCH_Add_Task(update_7seg_multiplex, 0, 250, NO_TASK_ID);
 
 //  SCH_Add_Task(fsm_automatic_run, 0, 100);
 //  SCH_Add_Task(fsm_manual_run, 0, 100);
 //  SCH_Add_Task(fsm_config_run, 0, 100);
 
-  fsm_auto_task_id = SCH_Add_Task(fsm_automatic_run, 0, 1000);
+  fsm_auto_task_id = SCH_Add_Task(fsm_automatic_run, 0, 100, NO_TASK_ID);
   fsm_man_task_id = NO_TASK_ID;
   fsm_config_task_id = NO_TASK_ID;
 
-  SCH_Add_Task(update_7seg_multiplex, 0, 125);
-  SCH_Add_Task(blink_debug_led, 0, 1000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
