@@ -16,9 +16,10 @@
 #define AUTO_DIR2_GREEN	3
 #define AUTO_DIR2_AMBER	4
 
-#define MAN_RED		10
-#define MAN_AMBER	11
-#define MAN_GREEN	12
+#define MAN_DIR1_GREEN	10
+#define MAN_DIR1_AMBER	11
+#define MAN_DIR2_GREEN	12
+#define MAN_DIR2_AMBER	13
 
 #define CONFIG_RED		20
 #define CONFIG_AMBER	21

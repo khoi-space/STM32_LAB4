@@ -32,8 +32,9 @@ void fsm_automatic_run(void) {
 		is_mode_button_locked = 1;
 
 		clear_all_LEDs();
+		clear_all_7seg_en();
 		mode = MAN_MODE;
-		status = MAN_RED;
+		status = MAN_DIR1_GREEN;
 		set_7seg_buffer_0(0);
 		set_7seg_buffer_1(0);
 

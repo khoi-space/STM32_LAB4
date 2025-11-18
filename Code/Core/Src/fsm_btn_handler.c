@@ -23,8 +23,9 @@ void fsm_btn_handler_run(void) {
 
 			if (mode == AUTO_MODE) {
 				mode = MAN_MODE;
-				status = MAN_RED;
-				set_7seg_buffer(0, 0);
+				status = MAN_DIR1_GREEN;
+				set_7seg_buffer_0(0);
+				set_7seg_buffer_1(0);
 			}
 			else if (mode == MAN_MODE) {
 				mode = CONFIG_MODE;
@@ -51,14 +52,14 @@ void fsm_btn_handler_run(void) {
 		break;
 
 	case MAN_MODE:
-		if (is_button_pressed(BUTTON_NEXT_OR_UP)) {
-			if (is_up_button_locked == 0) {
-				if (status == MAN_RED) status = MAN_GREEN;
-				else if (status == MAN_GREEN) status = MAN_RED;
-				is_up_button_locked = 1;
-			}
-		} else is_up_button_locked = 0;
-		clear_all_7seg_en();
+//		if (is_button_pressed(BUTTON_NEXT_OR_UP)) {
+//			if (is_up_button_locked == 0) {
+//				if (status == MAN_RED) status = MAN_DIR1_GREEN;
+//				else if (status == MAN_GREEN) status = MAN_DIR;
+//				is_up_button_locked = 1;
+//			}
+//		} else is_up_button_locked = 0;
+//		clear_all_7seg_en();
 		break;
 	case CONFIG_MODE:
 		if (status != last_config_status) {
@@ -94,7 +95,7 @@ void fsm_btn_handler_run(void) {
 			}
 		} else is_set_button_locked = 0;
 
-		set_7seg_buffer(temp_counter, 3);
+//		set_7seg_buffer(temp_counter, 3);
 		break;
 	}
 }

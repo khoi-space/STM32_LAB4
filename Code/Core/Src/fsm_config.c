@@ -31,6 +31,7 @@ void fsm_config_run(void) {
 	if (is_button_pressed(BUTTON_MODE) && is_mode_button_locked == 0) {
 		is_mode_button_locked = 1;
 		clear_all_LEDs();
+		clear_all_7seg_en();
 
 		red_counter = red_counter_buffer;
 		amber_counter = amber_counter_buffer;
