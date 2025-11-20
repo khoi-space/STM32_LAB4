@@ -104,7 +104,7 @@ int main(void)
   SCH_Add_Task(fsm_config_run, 100, 100);
 
   // Add task: other helper functions
-  SCH_Add_Task(update_7seg_multiplex, 0, 50);
+  SCH_Add_Task(update_7seg_multiplex, 0, 125);
   SCH_Add_Task(blink_debug_led, 1000, 1000);
   SCH_Add_Task(button_reading, 0, 10);
 
@@ -115,6 +115,7 @@ int main(void)
   while (1)
   {
 	  SCH_Dispatch_Tasks();
+	  __WFI(); //Wait for interrupt
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -271,7 +272,7 @@ void initState(void) {
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	SCH_Update();
-//	button_reading();
+//	SCH_Dispatch_Tasks();
 }
 /* USER CODE END 4 */
 

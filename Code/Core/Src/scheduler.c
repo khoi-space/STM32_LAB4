@@ -114,38 +114,56 @@ uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t DELAY, uint32_t PERIOD) {
 }
 
 void SCH_Update(void) {
-	if (	SCH_tasks_list_head != NULL &&
-			SCH_tasks_list_head->RunMe == 0 &&
-			SCH_tasks_list_head->Delay > 0
-		) {
-		SCH_tasks_list_head->Delay--;
-		if (SCH_tasks_list_head->Delay == 0) {
-			SCH_tasks_list_head->RunMe = 1;
-		}
+	sTasks *head = SCH_tasks_list_head;
+	if (head == NULL) return;
+
+	if (head->Delay > 0) {
+		head->Delay--;
+		if (head->Delay == 0) head->RunMe = 1;
 	}
 }
 
 void SCH_Dispatch_Tasks(void) {
-	if (SCH_tasks_list_head != NULL && SCH_tasks_list_head->RunMe > 0) {
-		sTasks *pTaskToRun = SCH_tasks_list_head;
+	if (SCH_tasks_list_head == NULL || SCH_tasks_list_head->RunMe == 0) return;
 
-		SCH_tasks_list_head = SCH_tasks_list_head->pNext;
+	sTasks *pTaskToRun = SCH_tasks_list_head;
 
-		if (SCH_tasks_list_head != NULL && SCH_tasks_list_head->Delay == 0) {
-			SCH_tasks_list_head->RunMe = 1;
-		}
-
-		void (*pFunc)(void) = pTaskToRun->pTask;
-
-		(*pFunc)();
-
-		if (pTaskToRun->Period != 0) { // Check for one-time task
-			SCH_Add_Task(pTaskToRun->pTask, pTaskToRun->Period * TIMER_CYCLE, pTaskToRun->Period * TIMER_CYCLE);
-		}
-
-		releaseNode(pTaskToRun);
+	SCH_tasks_list_head = SCH_tasks_list_head->pNext;
+	if (SCH_tasks_list_head != NULL && SCH_tasks_list_head->Delay == 0) {
+		SCH_tasks_list_head->RunMe = 1;
 	}
+
+	void (*pFunc)(void) = pTaskToRun->pTask;
+
+	(*pFunc)();
+
+	if (pTaskToRun->Period != 0) { // Check for one-time task
+		SCH_Add_Task(pTaskToRun->pTask, pTaskToRun->Period * TIMER_CYCLE, pTaskToRun->Period * TIMER_CYCLE);
+	}
+
+	releaseNode(pTaskToRun);
 }
+
+//void SCH_Dispatch_Tasks(void) {
+//	while (SCH_tasks_list_head != NULL && SCH_tasks_list_head->RunMe > 0) {
+//		sTasks *node = SCH_tasks_list_head;
+//		SCH_tasks_list_head = node->pNext;
+//
+//		if (SCH_tasks_list_head != NULL && SCH_tasks_list_head->Delay == 0) {
+//			SCH_tasks_list_head->RunMe = 1;
+//		}
+//
+//		void (*pFunc)(void) = node->pTask;
+//
+//		pFunc();
+//
+//		if (node->Period != 0) {
+//			SCH_Add_Task(pFunc, node->Period * TIMER_CYCLE, node->Period * TIMER_CYCLE);
+//		}
+//
+//		releaseNode(node);
+//	}
+//}
 
 uint8_t SCH_Delete_Task(uint32_t taskID) {
 	if (taskID == NO_TASK_ID || SCH_tasks_list_head == NULL) return 0;

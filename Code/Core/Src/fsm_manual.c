@@ -64,18 +64,22 @@ void fsm_manual_run(void) {
 		if (counter <= 0) {
 			status = MAN_DIR0_GREEN;
 			set_7seg_buffer_0(99);
+			set_7seg_buffer_1(99);
 		} else {
 			--counter;
 			set_7seg_buffer_0(counter / 10);
+			set_7seg_buffer_1(counter / 10);
 		}
 	}
 
 	if (status == MAN_DIR0_AMBER) {
 		if (counter <= 0) {
 			status = MAN_DIR1_GREEN;
+			set_7seg_buffer_0(99);
 			set_7seg_buffer_1(99);
 		} else {
 			--counter;
+			set_7seg_buffer_0(counter / 10);
 			set_7seg_buffer_1(counter / 10);
 		}
 	}

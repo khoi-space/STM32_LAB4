@@ -16,12 +16,17 @@
 
 int temp_counter = 0;
 
+int auto_up_flag = 0;
+
 static int blink_counter = 0;
 #define BLINK_CYCLE	5 //500ms
 
 void initConfig(void) {
 	clear_all_LEDs();
 	clear_all_7seg_en();
+
+	auto_up_flag = 0;
+	blink_counter = 0;
 
 	mode = CONFIG_MODE;
 	status = CONFIG_RED;
@@ -69,6 +74,13 @@ void fsm_config_run(void) {
 		is_up_button_locked = 0;
 	}
 
+	// BUTTON_NEXT_OR_UP (long press): auto count up temp_counter every 500ms
+	if (is_button_pressed_1s(BUTTON_NEXT_OR_UP)) {
+		auto_up_flag = 1;
+	} else if (!is_button_pressed_1s(BUTTON_NEXT_OR_UP)) {
+		auto_up_flag = 0;
+	}
+
 	// BUTTON_SET: set temp_counter to counter
 	if (is_button_pressed(BUTTON_SET) && is_set_button_locked == 0) {
 		is_set_button_locked = 1;
@@ -112,6 +124,10 @@ void fsm_config_run(void) {
 	// Use a counter to increase the delay to 500ms
 	if (blink_counter <= 0) {
 		blink_counter = BLINK_CYCLE;
+
+		if (auto_up_flag == 1) {
+			++temp_counter;
+		}
 
 		switch(status) {
 			case CONFIG_RED:

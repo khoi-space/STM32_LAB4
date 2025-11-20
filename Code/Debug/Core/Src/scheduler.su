@@ -2,7 +2,7 @@ scheduler.c:17:16:getFreeNode	16	static
 scheduler.c:27:13:releaseNode	16	static
 scheduler.c:37:17:getNewTaskID	4	static
 scheduler.c:45:6:SCH_Init	16	static
-scheduler.c:56:10:SCH_Add_Task	48	static
-scheduler.c:112:6:SCH_Update	4	static
-scheduler.c:124:6:SCH_Dispatch_Tasks	16	static
-scheduler.c:146:9:SCH_Delete_Task	24	static
+scheduler.c:59:10:SCH_Add_Task	48	static
+scheduler.c:116:6:SCH_Update	16	static
+scheduler.c:126:6:SCH_Dispatch_Tasks	16	static
+scheduler.c:168:9:SCH_Delete_Task	24	static
