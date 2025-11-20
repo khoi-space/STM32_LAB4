@@ -11,6 +11,7 @@
 #include "main.h"
 #include "global.h"
 
+void initMan(void);
 void fsm_manual_run(void);
 
 #endif /* INC_FSM_MANUAL_H_ */

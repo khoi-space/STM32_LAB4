@@ -30,7 +30,6 @@
 #include "fsm_automatic.h"
 #include "fsm_manual.h"
 #include "fsm_config.h"
-#include "fsm_btn_handler.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -99,18 +98,16 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim2);
   SCH_Init();
 
-//  SCH_Add_Task(fsm_btn_handler_run, 0, 300);
+  // Add task: 3 FSM
+  SCH_Add_Task(fsm_automatic_run, 100, 100);
+  SCH_Add_Task(fsm_manual_run, 100, 100);
+  SCH_Add_Task(fsm_config_run, 100, 100);
 
-  SCH_Add_Task(fsm_automatic_run, 0, 100);
-  SCH_Add_Task(fsm_manual_run, 0, 100);
-  SCH_Add_Task(fsm_config_run, 0, 100);
-
-//  fsm_auto_task_id = SCH_Add_Task(fsm_automatic_run, 0, 1000);
-//  fsm_man_task_id = NO_TASK_ID;
-//  fsm_config_task_id = NO_TASK_ID;
-
-//  SCH_Add_Task(update_7seg_multiplex, 0, 125);
+  // Add task: other helper functions
+  SCH_Add_Task(update_7seg_multiplex, 0, 50);
   SCH_Add_Task(blink_debug_led, 1000, 1000);
+  SCH_Add_Task(button_reading, 0, 10);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -274,7 +271,7 @@ void initState(void) {
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	SCH_Update();
-	button_reading();
+//	button_reading();
 }
 /* USER CODE END 4 */
 

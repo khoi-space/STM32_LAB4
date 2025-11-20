@@ -26,8 +26,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/global.h ../Core/Inc/main.h ../Core/Inc/scheduler.h \
  ../Core/Inc/input_reading.h ../Core/Inc/display7SEG.h \
  ../Core/Inc/displayLED.h ../Core/Inc/fsm_automatic.h \
- ../Core/Inc/global.h ../Core/Inc/fsm_manual.h ../Core/Inc/fsm_config.h \
- ../Core/Inc/fsm_btn_handler.h
+ ../Core/Inc/global.h ../Core/Inc/fsm_manual.h ../Core/Inc/fsm_config.h
 
 ../Core/Inc/main.h:
 
@@ -98,5 +97,3 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/fsm_manual.h:
 
 ../Core/Inc/fsm_config.h:
-
-../Core/Inc/fsm_btn_handler.h:

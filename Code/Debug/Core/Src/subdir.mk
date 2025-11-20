@@ -8,7 +8,6 @@ C_SRCS += \
 ../Core/Src/display7SEG.c \
 ../Core/Src/displayLED.c \
 ../Core/Src/fsm_automatic.c \
-../Core/Src/fsm_btn_handler.c \
 ../Core/Src/fsm_config.c \
 ../Core/Src/fsm_manual.c \
 ../Core/Src/global.c \
@@ -25,7 +24,6 @@ OBJS += \
 ./Core/Src/display7SEG.o \
 ./Core/Src/displayLED.o \
 ./Core/Src/fsm_automatic.o \
-./Core/Src/fsm_btn_handler.o \
 ./Core/Src/fsm_config.o \
 ./Core/Src/fsm_manual.o \
 ./Core/Src/global.o \
@@ -42,7 +40,6 @@ C_DEPS += \
 ./Core/Src/display7SEG.d \
 ./Core/Src/displayLED.d \
 ./Core/Src/fsm_automatic.d \
-./Core/Src/fsm_btn_handler.d \
 ./Core/Src/fsm_config.d \
 ./Core/Src/fsm_manual.d \
 ./Core/Src/global.d \

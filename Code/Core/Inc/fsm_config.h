@@ -12,8 +12,8 @@
 #include "global.h"
 
 extern int temp_counter;
-extern int last_config_status;
 
+void initConfig(void);
 void fsm_config_run(void);
 
 #endif /* INC_FSM_CONFIG_H_ */

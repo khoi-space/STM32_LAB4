@@ -1,8 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
 <WORKSPACE>
- <FRAME activewindow="0">
-  <PLACEMENT>2c0000000200000003000000ffffffffffffffffffffffffffffffffb90000000c000000c8060000f1030000</PLACEMENT>
+ <FRAME activewindow="1">
+  <PLACEMENT>2c00000000000000010000000083ffff0083ffffffffffffffffffff7807000035fdffffc00b00001a010000</PLACEMENT>
   <WINDOW type="default" module="ISIS"/>
+  <WINDOW type="default" module="VSMDEBUG"/>
  </FRAME>
  <MODULE name="VSMDEBUG">
   <PWI>
@@ -334,7 +335,11 @@
    </POPUP>
    <POPUP w="600" x="688" flags="0000002a" y="620" h="400" pid="100" iid="1">
     <PROPERTIES>
-     <ITEM name="Breakpoint 0">"",8000518,0000,BEEC,044E,1623945144
+     <ITEM name="Breakpoint 0">"",8000508,0000,1B54,044E,93646544
+</ITEM>
+     <ITEM name="Breakpoint 1">"",8000512,0000,BEEC,044E,297986560
+</ITEM>
+     <ITEM name="Breakpoint 2">"",8000514,0000,B2ED,044E,-1467238776
 </ITEM>
      <ITEM name="CaseSensitive">No</ITEM>
      <ITEM name="DISPADDRS">Yes</ITEM>
@@ -342,7 +347,7 @@
      <ITEM name="DISPOPCODES">No</ITEM>
      <ITEM name="FIXUPBPTS">Yes</ITEM>
      <ITEM name="WordsOnly">No</ITEM>
-     <ITEM name="nBreakpoints">0</ITEM>
+     <ITEM name="nBreakpoints">3</ITEM>
     </PROPERTIES>
    </POPUP>
    <POPUP w="300" x="708" flags="0000000a" y="720" h="300" pid="101" iid="1">
@@ -362,10 +367,10 @@
      <ITEM name="nItems">0</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="30" x="728" flags="00000008" y="840" h="13" pid="102" iid="1">
+   <POPUP w="258" x="728" flags="00000008" y="840" h="216" pid="102" iid="1">
     <PROPERTIES/>
    </POPUP>
-   <POPUP w="22" x="748" flags="00000008" y="860" h="18" pid="191" iid="1">
+   <POPUP w="194" x="748" flags="00000008" y="860" h="281" pid="191" iid="1">
     <PROPERTIES/>
    </POPUP>
   </PWI>

@@ -11,12 +11,7 @@
 #include "main.h"
 #include "global.h"
 
-extern int red_counter;
-extern int amber_counter;
-extern int green_counter;
-
-void traffic_machine(int mode);
-
+void initAuto(void);
 void fsm_automatic_run(void);
 
 #endif /* INC_FSM_AUTOMATIC_H_ */

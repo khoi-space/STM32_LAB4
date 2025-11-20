@@ -13,12 +13,6 @@
 #define BUTTON_SET	2
 #define BUTTON_RESET	3
 
-typedef enum ButtonState {
-	BUTTON_RELEASED,
-	BUTTON_PRESSED,
-	BUTTON_PRESSED_MORE_THAN_1S
-} ButtonState_t;
-
 void button_reading (void);
 unsigned char is_button_pressed(unsigned char index);
 unsigned char is_button_pressed_1s(unsigned char index);

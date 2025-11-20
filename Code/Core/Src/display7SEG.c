@@ -68,23 +68,24 @@ void update_7seg_multiplex(void) {
 
 	switch(led_7seg_idx) {
 		case 0:
-			display7SEG_0(led_7seg_buffer[0]); // Dùng chân ..._0
+			display7SEG_0(led_7seg_buffer[0]);
 			HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, ON);
 			break;
 		case 1:
-			display7SEG_0(led_7seg_buffer[1]); // Dùng chân ..._0
+			display7SEG_0(led_7seg_buffer[1]);
 			HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, ON);
 			break;
 		case 2:
-			display7SEG_1(led_7seg_buffer[2]); // Dùng chân ..._1
+			display7SEG_0(led_7seg_buffer[2]);
 			HAL_GPIO_WritePin(EN2_GPIO_Port, EN2_Pin, ON);
 			break;
 		case 3:
-			display7SEG_1(led_7seg_buffer[3]); // Dùng chân ..._1
+			display7SEG_0(led_7seg_buffer[3]);
 			HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, ON);
 			break;
 		default: break;
 	}
 
-	led_7seg_idx = (led_7seg_idx + 1) % 4;
+	++led_7seg_idx;
+	if (led_7seg_idx >= 4) led_7seg_idx = 0;
 }

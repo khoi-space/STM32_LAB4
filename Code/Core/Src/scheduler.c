@@ -8,27 +8,65 @@
 #include "scheduler.h"
 #include "main.h"
 
-static uint32_t getNewTaskID(void);
-static uint32_t newTaskID = 0;
 
+sTasks SCH_tasks_node_pool[SCH_MAX_TASKS];
 sTasks *SCH_tasks_list_head = NULL;
+
+
+// Get a free node in pool
+static sTasks* getFreeNode(void) {
+	for (int i = 0; i < SCH_MAX_TASKS; ++i) {
+		if (SCH_tasks_node_pool[i].TaskID == 0) {
+			return &SCH_tasks_node_pool[i];
+		}
+	}
+	return NULL; // Run out of memory
+}
+
+// Put node into pool
+static void releaseNode(sTasks* node) {
+	if (node != NULL) {
+		node->TaskID = NO_TASK_ID;
+		node->pTask = 0;
+		node->pNext = NULL;
+	}
+}
+
+// Get new taskID
+static uint32_t newTaskID = 0;
+static uint32_t getNewTaskID(void) {
+	newTaskID++;
+	if (newTaskID == NO_TASK_ID) {
+		newTaskID++; //Skip NO_TASK_ID value
+	}
+	return newTaskID;
+}
 
 void SCH_Init(void) {
 	SCH_tasks_list_head = NULL;
 	newTaskID = 0;
+
+	for (int i = 0; i < SCH_MAX_TASKS; ++i) {
+		SCH_tasks_node_pool[i].TaskID = 0;
+		SCH_tasks_node_pool[i].pTask = 0;
+		SCH_tasks_node_pool[i].Delay = 0;
+		SCH_tasks_node_pool[i].Period = 0;
+		SCH_tasks_node_pool[i].RunMe = 0;
+		SCH_tasks_node_pool[i].pNext = NULL;
+	}
 }
 
 uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t DELAY, uint32_t PERIOD) {
 	uint32_t _DELAY = DELAY / TIMER_CYCLE;
 	uint32_t _PERIOD = PERIOD / TIMER_CYCLE;
 
-	sTasks *newTask = (sTasks*)malloc(sizeof(sTasks));
+	sTasks *newTask = getFreeNode();
 	if (newTask == NULL) return NO_TASK_ID;
 
 	newTask->pTask = pFunc;
 	newTask->Delay = _DELAY;
 	newTask->Period = _PERIOD;
-	newTask->RunMe = (_DELAY == 0) ? 1 : 0;
+	newTask->RunMe = 0;
 	newTask->TaskID = getNewTaskID();
 	newTask->pNext = NULL;
 
@@ -37,42 +75,52 @@ uint32_t SCH_Add_Task(void (*pFunc)(), uint32_t DELAY, uint32_t PERIOD) {
 		return newTask->TaskID;
 	}
 
-	sTasks *prev = NULL;
-	sTasks *curr = SCH_tasks_list_head;
-	uint32_t sumDelay = 0;
-
-	while (curr != NULL && sumDelay + curr->Delay <= _DELAY) {
-		sumDelay += curr->Delay;
-		prev = curr;
-		curr = curr->pNext;
-	}
-
-	newTask->Delay = _DELAY - sumDelay;
-
-	if (curr != NULL) {
-		curr->Delay -= newTask->Delay;
-	}
-
-	if (prev == NULL) {
+	if (_DELAY < SCH_tasks_list_head->Delay) {
+		SCH_tasks_list_head->Delay -= _DELAY;
 		newTask->pNext = SCH_tasks_list_head;
 		SCH_tasks_list_head = newTask;
 	} else {
+		sTasks *curr = SCH_tasks_list_head;
+		sTasks *prev = NULL;
+		uint32_t sumDelay = 0;
+
+		while (curr != NULL) {
+			if (sumDelay + curr->Delay > _DELAY) {
+				// Found the index to insert curr
+				break;
+			}
+			sumDelay += curr->Delay;
+			prev = curr;
+			curr = curr->pNext;
+		}
+
+		newTask->Delay = _DELAY - sumDelay;
+
+		if (curr != NULL) {
+			curr->Delay -= newTask->Delay;
+		}
+
 		newTask->pNext = curr;
-		prev->pNext = newTask;
+		if (prev != NULL) {
+			prev->pNext = newTask;
+		}
 	}
 
-	return newTaskID;
+	if (newTask->Delay == 0) {
+		newTask->RunMe = 1;
+	}
+
+	return newTask->TaskID;
 }
 
 void SCH_Update(void) {
-	if (SCH_tasks_list_head != NULL) {
-		if (SCH_tasks_list_head->RunMe == 0) {
-			if (SCH_tasks_list_head->Delay > 0) {
-				SCH_tasks_list_head->Delay--;
-				if (SCH_tasks_list_head->Delay == 0) {
-					SCH_tasks_list_head->RunMe = 1;
-				}
-			}
+	if (	SCH_tasks_list_head != NULL &&
+			SCH_tasks_list_head->RunMe == 0 &&
+			SCH_tasks_list_head->Delay > 0
+		) {
+		SCH_tasks_list_head->Delay--;
+		if (SCH_tasks_list_head->Delay == 0) {
+			SCH_tasks_list_head->RunMe = 1;
 		}
 	}
 }
@@ -81,16 +129,21 @@ void SCH_Dispatch_Tasks(void) {
 	if (SCH_tasks_list_head != NULL && SCH_tasks_list_head->RunMe > 0) {
 		sTasks *pTaskToRun = SCH_tasks_list_head;
 
-		(*pTaskToRun->pTask)(); // Run task
+		SCH_tasks_list_head = SCH_tasks_list_head->pNext;
 
-		if (pTaskToRun->Period != 0) {
-			uint32_t DELAY = pTaskToRun->Delay * TIMER_CYCLE;
-			uint32_t PERIOD = pTaskToRun->Period * TIMER_CYCLE;
-
-			SCH_Add_Task(pTaskToRun->pTask, DELAY, PERIOD);
+		if (SCH_tasks_list_head != NULL && SCH_tasks_list_head->Delay == 0) {
+			SCH_tasks_list_head->RunMe = 1;
 		}
 
-		SCH_Delete_Task(pTaskToRun->TaskID);
+		void (*pFunc)(void) = pTaskToRun->pTask;
+
+		(*pFunc)();
+
+		if (pTaskToRun->Period != 0) { // Check for one-time task
+			SCH_Add_Task(pTaskToRun->pTask, pTaskToRun->Period * TIMER_CYCLE, pTaskToRun->Period * TIMER_CYCLE);
+		}
+
+		releaseNode(pTaskToRun);
 	}
 }
 
@@ -113,7 +166,7 @@ uint8_t SCH_Delete_Task(uint32_t taskID) {
 				prev->pNext = curr->pNext;
 			}
 
-			free(curr);
+			releaseNode(curr);
 			return 1;
 		}
 
@@ -122,13 +175,4 @@ uint8_t SCH_Delete_Task(uint32_t taskID) {
 	}
 
 	return 0;
-}
-
-
-static uint32_t getNewTaskID(void) {
-	newTaskID++;
-	if (newTaskID == NO_TASK_ID) {
-		newTaskID++; //Skip NO_TASK_ID value
-	}
-	return newTaskID;
 }

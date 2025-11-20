@@ -11,15 +11,15 @@
 #include "main.h"
 
 #define INIT		0
-#define	AUTO_DIR1_GREEN	1
-#define	AUTO_DIR1_AMBER	2
-#define AUTO_DIR2_GREEN	3
-#define AUTO_DIR2_AMBER	4
+#define	AUTO_DIR0_GREEN	1
+#define	AUTO_DIR0_AMBER	2
+#define AUTO_DIR1_GREEN	3
+#define AUTO_DIR1_AMBER	4
 
-#define MAN_DIR1_GREEN	10
-#define MAN_DIR1_AMBER	11
-#define MAN_DIR2_GREEN	12
-#define MAN_DIR2_AMBER	13
+#define MAN_DIR0_GREEN	10
+#define MAN_DIR0_AMBER	11
+#define MAN_DIR1_GREEN	12
+#define MAN_DIR1_AMBER	13
 
 #define CONFIG_RED		20
 #define CONFIG_AMBER	21
@@ -34,6 +34,7 @@ extern int mode;
 extern int is_mode_button_locked;
 extern int is_up_button_locked;
 extern int is_set_button_locked;
+extern int is_reset_button_locked;
 
 extern int fsm_auto_task_id;
 extern int fsm_man_task_id;

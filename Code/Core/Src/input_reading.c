@@ -12,6 +12,12 @@
 #define		BUTTON_IS_PRESSED			GPIO_PIN_RESET
 #define		BUTTON_IS_RELEASED			GPIO_PIN_SET
 
+typedef enum ButtonState {
+	BUTTON_RELEASED,
+	BUTTON_PRESSED,
+	BUTTON_PRESSED_MORE_THAN_1S
+} ButtonState_t;
+
 static GPIO_PinState buttonBuffer[N0_OF_BUTTONS];
 static GPIO_PinState debounceButtonBuffer1[N0_OF_BUTTONS];
 static GPIO_PinState debounceButtonBuffer2[N0_OF_BUTTONS];

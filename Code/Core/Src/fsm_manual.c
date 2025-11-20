@@ -17,78 +17,98 @@
 static int counter;
 #define COUNTER_CYCLE 10 //1000ms
 
+void initMan(void) {
+	clear_all_LEDs();
+	clear_all_7seg_en();
+
+	mode = MAN_MODE;
+	status = MAN_DIR0_GREEN;
+	set_7seg_buffer_0(99);
+	set_7seg_buffer_1(99);
+}
+
 void fsm_manual_run(void) {
 	if (mode != MAN_MODE) return;
 
-	// Change mode to config_mode
+	// BUTTON_MODE: change mode to config mode
 	if (is_button_pressed(BUTTON_MODE) && is_mode_button_locked == 0) {
 		is_mode_button_locked = 1;
-		clear_all_LEDs();
-		clear_all_7seg_en();
 
-		mode = CONFIG_MODE;
-		status = CONFIG_RED;
-		last_config_status = CONFIG_RED;
-		temp_counter = red_counter_buffer;
+		initConfig(); // Prepare resources for config mode
 		return;
 	} else if (!is_button_pressed(BUTTON_MODE)) {
 		is_mode_button_locked = 0;
 	}
 
+	// BUTTON_NEXT_OR_UP: decide which direction to free
 	if (is_button_pressed(BUTTON_NEXT_OR_UP) && is_up_button_locked == 0) {
 		is_up_button_locked = 1;
 
-		if (status == MAN_DIR2_GREEN) {
-			clear_all_7seg_en();
-			counter = amber_counter_buffer * COUNTER_CYCLE;
-			status = MAN_DIR2_AMBER;
-		}
-
-		else if (status == MAN_DIR1_GREEN) {
+		if (status == MAN_DIR1_GREEN) {
 			clear_all_7seg_en();
 			counter = amber_counter_buffer * COUNTER_CYCLE;
 			status = MAN_DIR1_AMBER;
+		}
+
+		else if (status == MAN_DIR0_GREEN) {
+			clear_all_7seg_en();
+			counter = amber_counter_buffer * COUNTER_CYCLE;
+			status = MAN_DIR0_AMBER;
 		}
 	} else if (!is_button_pressed(BUTTON_NEXT_OR_UP)) {
 		is_up_button_locked = 0;
 	}
 
-	if (status == MAN_DIR2_AMBER) {
-		if (counter <= 0) {
-			status = MAN_DIR1_GREEN;
-		} else --counter;
-	}
-
+	// AMBER count-down before switching to RED
 	if (status == MAN_DIR1_AMBER) {
 		if (counter <= 0) {
-			status = MAN_DIR2_GREEN;
-		} else --counter;
+			status = MAN_DIR0_GREEN;
+			set_7seg_buffer_0(99);
+		} else {
+			--counter;
+			set_7seg_buffer_0(counter / 10);
+		}
+	}
+
+	if (status == MAN_DIR0_AMBER) {
+		if (counter <= 0) {
+			status = MAN_DIR1_GREEN;
+			set_7seg_buffer_1(99);
+		} else {
+			--counter;
+			set_7seg_buffer_1(counter / 10);
+		}
+	}
+
+	// BUTTON_RESET (long press): reset state
+	if (is_button_pressed_1s(BUTTON_RESET)) {
+		initMan();
 	}
 
 	// Display
 	switch(status) {
-		case MAN_DIR2_AMBER: // Dir1: RED - Dir2: AMBER
+		case MAN_DIR0_AMBER: // RED - AMBER
 			set_red_LEDs(ON, OFF);
 			set_amber_LEDs(OFF, ON);
 			set_green_LEDs(OFF, OFF);
 			break;
-		case MAN_DIR2_GREEN: // Dir1: RED - Dir2: GREEN
+		case MAN_DIR0_GREEN: // RED - GREEN
 			set_red_LEDs(ON, OFF);
 			set_amber_LEDs(OFF, OFF);
 			set_green_LEDs(OFF, ON);
 			break;
-		case MAN_DIR1_AMBER: // Dir1: AMBER - Dir2: RED
+		case MAN_DIR1_AMBER: // AMBER - RED
 			set_red_LEDs(OFF, ON);
 			set_amber_LEDs(ON, OFF);
 			set_green_LEDs(OFF, OFF);
 			break;
-		case MAN_DIR1_GREEN: // Dir1: GREEN - Dir2: RED
+		case MAN_DIR1_GREEN: // GREEN - RED
 			set_red_LEDs(OFF, ON);
 			set_amber_LEDs(OFF, OFF);
 			set_green_LEDs(ON, OFF);
 			break;
 		default:
-			status = MAN_DIR1_GREEN;
+			status = MAN_DIR0_GREEN;
 			break;
 	}
 }

@@ -24,25 +24,38 @@ int time_route1 = 0;
 static int counter = 0;
 #define COUNTER_CYCLE	10 //1000ms
 
+void initAuto(void) {
+	clear_all_LEDs();
+	clear_all_7seg_en();
+
+	red_counter = red_counter_buffer;
+	amber_counter = amber_counter_buffer;
+	green_counter = green_counter_buffer;
+
+	mode = AUTO_MODE;
+	status = AUTO_DIR0_GREEN;
+}
+
 void fsm_automatic_run(void) {
 	if (mode != AUTO_MODE) return;
 
-	// Change mode to man_mode
+	// BUTTON_MODE: change mode to manual mode
 	if (is_button_pressed(BUTTON_MODE) && is_mode_button_locked == 0) {
 		is_mode_button_locked = 1;
 
-		clear_all_LEDs();
-		clear_all_7seg_en();
-		mode = MAN_MODE;
-		status = MAN_DIR1_GREEN;
-		set_7seg_buffer_0(0);
-		set_7seg_buffer_1(0);
+		initMan(); // Prepare resources for manual mode
 
 		return;
 	} else if (!is_button_pressed(BUTTON_MODE)) {
 		is_mode_button_locked = 0;
 	}
 
+	// BUTTON_RESET (long press): reset state
+	if (is_button_pressed_1s(BUTTON_RESET)) {
+		initAuto();
+	}
+
+	// Use counter to increase delay to 1000ms
 	if (counter <= 0) {
 		counter = COUNTER_CYCLE;
 		switch(status) {
@@ -50,13 +63,13 @@ void fsm_automatic_run(void) {
 				red_counter = red_counter_buffer;
 				amber_counter = amber_counter_buffer;
 				green_counter = green_counter_buffer;
-				status = AUTO_DIR1_GREEN;
+				status = AUTO_DIR0_GREEN;
 
 				time_route0 = green_counter;
 				time_route1 = green_counter + amber_counter;
 				break;
 
-			case AUTO_DIR1_GREEN:
+			case AUTO_DIR0_GREEN:
 				set_red_LEDs(OFF , ON);
 				set_amber_LEDs(OFF, OFF);
 				set_green_LEDs(ON, OFF);
@@ -65,48 +78,16 @@ void fsm_automatic_run(void) {
 				time_route1 = green_counter + amber_counter_buffer;
 
 				if (green_counter <= 0) {
-					status = AUTO_DIR1_AMBER;
+					status = AUTO_DIR0_AMBER;
 					amber_counter = amber_counter_buffer;
 				} else {
 					green_counter--;
 				}
 				break;
 
-			case AUTO_DIR1_AMBER:
+			case AUTO_DIR0_AMBER:
 				set_red_LEDs(OFF, ON);
 				set_amber_LEDs(ON, OFF);
-				set_green_LEDs(OFF, OFF);
-
-				time_route0 = amber_counter;
-				time_route1 = amber_counter;
-
-				if (amber_counter <= 0) {
-					status = AUTO_DIR2_GREEN;
-					green_counter = green_counter_buffer;
-				} else {
-					amber_counter--;
-				}
-				break;
-
-			case AUTO_DIR2_GREEN:
-				set_red_LEDs(ON, OFF);
-				set_amber_LEDs(OFF, OFF);
-				set_green_LEDs(OFF, ON);
-
-				time_route0 = green_counter + amber_counter_buffer;
-				time_route1 = green_counter;
-
-				if (green_counter <= 0) {
-					status = AUTO_DIR2_AMBER;
-					amber_counter = amber_counter_buffer;
-				} else {
-					green_counter--;
-				}
-				break;
-
-			case AUTO_DIR2_AMBER:
-				set_red_LEDs(ON, OFF);
-				set_amber_LEDs(OFF, ON);
 				set_green_LEDs(OFF, OFF);
 
 				time_route0 = amber_counter;
@@ -120,13 +101,46 @@ void fsm_automatic_run(void) {
 				}
 				break;
 
+			case AUTO_DIR1_GREEN:
+				set_red_LEDs(ON, OFF);
+				set_amber_LEDs(OFF, OFF);
+				set_green_LEDs(OFF, ON);
+
+				time_route0 = green_counter + amber_counter_buffer;
+				time_route1 = green_counter;
+
+				if (green_counter <= 0) {
+					status = AUTO_DIR1_AMBER;
+					amber_counter = amber_counter_buffer;
+				} else {
+					green_counter--;
+				}
+				break;
+
+			case AUTO_DIR1_AMBER:
+				set_red_LEDs(ON, OFF);
+				set_amber_LEDs(OFF, ON);
+				set_green_LEDs(OFF, OFF);
+
+				time_route0 = amber_counter;
+				time_route1 = amber_counter;
+
+				if (amber_counter <= 0) {
+					status = AUTO_DIR0_GREEN;
+					green_counter = green_counter_buffer;
+				} else {
+					amber_counter--;
+				}
+				break;
+
 			default:
 				status = INIT;
 				break;
 		}
+
+		set_7seg_buffer_0(time_route0);
+		set_7seg_buffer_1(time_route1);
 	} else --counter;
 
-	set_7seg_buffer_0(time_route0);
-	set_7seg_buffer_1(time_route1);
-	update_7seg_multiplex();
+//	update_7seg_multiplex();
 }

@@ -16,30 +16,43 @@
 
 int temp_counter = 0;
 
-int last_config_status = -1;
-
 static int blink_counter = 0;
 #define BLINK_CYCLE	5 //500ms
 
+void initConfig(void) {
+	clear_all_LEDs();
+	clear_all_7seg_en();
+
+	mode = CONFIG_MODE;
+	status = CONFIG_RED;
+	temp_counter = red_counter_buffer;
+}
+
+void balanceCounter(void) {
+    // amber = 20% of red, integer math
+    amber_counter_buffer = red_counter_buffer / 5;
+    if (amber_counter_buffer < 1) amber_counter_buffer = 1;
+
+    green_counter_buffer = red_counter_buffer - amber_counter_buffer;
+    if (green_counter_buffer <= 0) {
+        amber_counter_buffer = (red_counter_buffer >= 2) ? 1 : 0;
+        green_counter_buffer = red_counter_buffer - amber_counter_buffer;
+        if (green_counter_buffer <= 0) green_counter_buffer = 1;
+    }
+}
+
+
 void fsm_config_run(void) {
 	if (mode != CONFIG_MODE) {
-		last_config_status = -1;
 		return;
 	}
 
-	// Change mode to auto_mode
+	// BUTTON_MODE: change mode to auto mode
 	if (is_button_pressed(BUTTON_MODE) && is_mode_button_locked == 0) {
 		is_mode_button_locked = 1;
-		clear_all_LEDs();
-		clear_all_7seg_en();
 
-		red_counter = red_counter_buffer;
-		amber_counter = amber_counter_buffer;
-		green_counter = green_counter_buffer;
-
-		mode = AUTO_MODE;
-		status = AUTO_DIR2_GREEN;
-		last_config_status = -1;
+		balanceCounter();
+		initAuto(); // Prepare resources for auto mode
 
 		is_mode_button_locked = 1;
 		return;
@@ -47,7 +60,7 @@ void fsm_config_run(void) {
 		is_mode_button_locked = 0;
 	}
 
-	// If button_next_or_up pressed, count up temp_counter
+	// BUTTON_NEXT_OR_UP: count up temp_counter
 	if (is_button_pressed(BUTTON_NEXT_OR_UP) && is_up_button_locked == 0) {
 		is_up_button_locked = 1;
 		temp_counter += 1;
@@ -56,9 +69,10 @@ void fsm_config_run(void) {
 		is_up_button_locked = 0;
 	}
 
-	// If button_set pressed, set temp_counter to counter
+	// BUTTON_SET: set temp_counter to counter
 	if (is_button_pressed(BUTTON_SET) && is_set_button_locked == 0) {
 		is_set_button_locked = 1;
+
 		if (status == CONFIG_RED) {
 			red_counter_buffer = temp_counter;
 			temp_counter = amber_counter_buffer;
@@ -71,37 +85,31 @@ void fsm_config_run(void) {
 		}
 		else if (status == CONFIG_GREEN) {
 			green_counter_buffer = temp_counter;
+			balanceCounter();
 			temp_counter = red_counter_buffer;
 			status = CONFIG_RED;
 		}
-	} else if (is_button_pressed(BUTTON_SET)) {
+	} else if (!is_button_pressed(BUTTON_SET)) {
 		is_set_button_locked = 0;
 	}
 
+	// BUTTON_RESET (just click): reset temp_counter to the lastest counter
+	if (is_button_pressed(BUTTON_RESET) && is_reset_button_locked == 0) {
+		is_reset_button_locked = 1;
 
-	// Blink LEDs every 500ms
-//	switch(status) {
-//		case CONFIG_RED:
-//			blink_red_LEDs();
-//			set_amber_LEDs(OFF, OFF);
-//			set_green_LEDs(OFF, OFF);
-//			break;
-//		case CONFIG_AMBER:
-//			blink_amber_LEDs();
-//			set_red_LEDs(OFF, OFF);
-//			set_green_LEDs(OFF, OFF);
-//			break;
-//		case CONFIG_GREEN:
-//			blink_green_LEDs();
-//			set_red_LEDs(OFF, OFF);
-//			set_amber_LEDs(OFF, OFF);
-//			break;
-//		default:
-//			status = CONFIG_RED;
-//			break;
-//	}
+		if (status == CONFIG_RED) temp_counter = red_counter_buffer;
+		else if (status == CONFIG_AMBER) temp_counter = amber_counter_buffer;
+		else if (status == CONFIG_GREEN) temp_counter = green_counter_buffer;
+	} else if (!is_button_pressed(BUTTON_RESET)) {
+		is_reset_button_locked = 0;
+	}
 
+	// BUTTON_RESET (long press): reset state
+	if (is_button_pressed_1s(BUTTON_RESET)) {
+		initConfig();
+	}
 
+	// Use a counter to increase the delay to 500ms
 	if (blink_counter <= 0) {
 		blink_counter = BLINK_CYCLE;
 
@@ -128,9 +136,11 @@ void fsm_config_run(void) {
 				status = CONFIG_RED;
 				break;
 		}
+
+		set_7seg_buffer_1(temp_counter);
 	} else {
 		blink_counter--;
 	}
-	set_7seg_buffer_1(temp_counter);
-	update_7seg_multiplex();
+
+//	update_7seg_multiplex();
 }

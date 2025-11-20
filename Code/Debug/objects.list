@@ -1,7 +1,6 @@
 "./Core/Src/display7SEG.o"
 "./Core/Src/displayLED.o"
 "./Core/Src/fsm_automatic.o"
-"./Core/Src/fsm_btn_handler.o"
 "./Core/Src/fsm_config.o"
 "./Core/Src/fsm_manual.o"
 "./Core/Src/global.o"
