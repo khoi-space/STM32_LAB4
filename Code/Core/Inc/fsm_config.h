@@ -11,7 +11,7 @@
 #include "main.h"
 #include "global.h"
 
-extern int temp_counter;
+extern uint8_t temp_counter;
 
 void initConfig(void);
 void fsm_config_run(void);

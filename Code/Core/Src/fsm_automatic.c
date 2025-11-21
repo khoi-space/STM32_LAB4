@@ -14,15 +14,15 @@
 #include "input_reading.h"
 #include "scheduler.h"
 
-int red_counter = 5;
-int amber_counter = 2;
-int green_counter = 3;
+static uint8_t red_counter = 5;
+static uint8_t amber_counter = 2;
+static uint8_t green_counter = 3;
 
-int time_route0 = 0;
-int time_route1 = 0;
+static uint8_t time_route0 = 0;
+static uint8_t time_route1 = 0;
 
-static int counter = 0;
 #define COUNTER_CYCLE	10 //1000ms
+static uint8_t counter = COUNTER_CYCLE;
 
 void initAuto(void) {
 	clear_all_LEDs();
@@ -67,7 +67,6 @@ void fsm_automatic_run(void) {
 
 				time_route0 = green_counter;
 				time_route1 = green_counter + amber_counter;
-				break;
 
 			case AUTO_DIR0_GREEN:
 				set_red_LEDs(OFF , ON);
@@ -141,6 +140,4 @@ void fsm_automatic_run(void) {
 		set_7seg_buffer_0(time_route0);
 		set_7seg_buffer_1(time_route1);
 	} else --counter;
-
-//	update_7seg_multiplex();
 }

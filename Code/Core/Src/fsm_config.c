@@ -14,11 +14,11 @@
 #include "input_reading.h"
 #include "scheduler.h"
 
-int temp_counter = 0;
+uint8_t temp_counter = 0;
 
-int auto_up_flag = 0;
+static uint8_t auto_up_flag = 0;
 
-static int blink_counter = 0;
+static uint8_t blink_counter = 0;
 #define BLINK_CYCLE	5 //500ms
 
 void initConfig(void) {
@@ -157,6 +157,4 @@ void fsm_config_run(void) {
 	} else {
 		blink_counter--;
 	}
-
-//	update_7seg_multiplex();
 }

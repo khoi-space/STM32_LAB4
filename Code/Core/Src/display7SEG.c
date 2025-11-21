@@ -8,7 +8,7 @@
 #include "global.h"
 #include "display7SEG.h"
 
-int digitSegment[10][7] = { // ACTIVE LOW
+static uint8_t digitSegment[10][7] = { // ACTIVE LOW
 	{0,0,0,0,0,0,1}, //0
 	{1,0,0,1,1,1,1}, //1
 	{0,0,1,0,0,1,0}, //2
@@ -62,7 +62,7 @@ void set_7seg_buffer_1(int num) {
 	led_7seg_buffer[3] = num % 10;
 }
 
-static int led_7seg_idx = 0;
+static uint8_t led_7seg_idx = 0;
 void update_7seg_multiplex(void) {
 	clear_all_7seg_en();
 

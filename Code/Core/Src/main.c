@@ -266,13 +266,8 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void initState(void) {
-
-}
-
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	SCH_Update();
-//	SCH_Dispatch_Tasks();
 }
 /* USER CODE END 4 */
 

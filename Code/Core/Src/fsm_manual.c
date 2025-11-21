@@ -14,7 +14,7 @@
 #include "input_reading.h"
 #include "scheduler.h"
 
-static int counter;
+static uint8_t counter;
 #define COUNTER_CYCLE 10 //1000ms
 
 void initMan(void) {
